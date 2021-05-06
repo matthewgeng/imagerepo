@@ -9,21 +9,26 @@ import NoMatch from "./NoMatch";
 import UserHome from "./home/UserHome";
 import UserEdit from "./edit/UserEdit";
 
+import { useAppDispatch } from "../state/hooks";
+
+import { updateUsername } from "../state/userSlice";
+
 interface Params {
   username: "";
 }
 
 const User = () => {
   const params: Params = useParams();
-
+  const dispatch = useAppDispatch();
+  dispatch(updateUsername(params.username));
   return (
     <Router>
       <Switch>
         <Route exact path="/:username">
-          <UserHome username={params.username} />
+          <UserHome />
         </Route>
         <Route exact path="/:username/edit">
-          <UserEdit username={params.username} />
+          <UserEdit />
         </Route>
         <Route path="*">
           <NoMatch />

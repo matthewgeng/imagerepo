@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import axios from "axios";
 import App from "./App";
+import store from "./state/store";
+import { Provider } from "react-redux";
+
 import reportWebVitals from "./reportWebVitals";
 
 // setting axios baseurl depending on environment variable
@@ -20,7 +23,9 @@ if (process.env.REACT_APP_PROD === "true") {
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

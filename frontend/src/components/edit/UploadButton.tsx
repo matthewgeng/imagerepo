@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
+import { useAppSelector } from "../../state/hooks";
 
+// TODO move logic into UserEdit component, child components shouldn't be responsible of logic+api calls
 const UploadButton = () => {
+  const username = useAppSelector((state) => state.user.username);
   const uploadRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<[File]>();
   const triggerUpload = (e: React.FormEvent) => {
@@ -13,13 +16,14 @@ const UploadButton = () => {
     }
   };
 
+  // todo change to async and await
   useEffect(() => {
     if (files) {
-      console.log(files);
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i]);
       }
+      formData.set("username", username);
       axios({
         method: "POST",
         url: `/api/upload`,
@@ -38,9 +42,6 @@ const UploadButton = () => {
   }, [files]);
 
   const onFileChange = (e: React.FormEvent) => {
-    /* Selected files data can be collected here. */
-    const formData = new FormData();
-
     // @ts-ignore
     setFiles([...e.target.files]);
 

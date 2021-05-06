@@ -3,14 +3,10 @@ import { Container, Row, Col } from "react-bootstrap";
 import ImageGallery from "../ImageGallery";
 import NavigationBar from "./NavigationBarHome";
 
-interface Props {
-  username: "";
-}
-
-const UserHome = (props: Props) => {
+const UserHome = () => {
   return (
     <Container fluid>
-      <NavigationBar username={props.username} />
+      <NavigationBar />
       <Row>
         <Col>
           <ImageGallery />
