@@ -3,16 +3,16 @@ import { Navbar, Nav, Form, FormControl, Button } from "react-bootstrap";
 
 import { Link } from "react-router-dom";
 
-interface Props {
-  username: "";
-}
-const NavigationBar = (props: Props) => {
-  const url = "/" + props.username;
+import { useAppSelector } from "../../state/hooks";
+const NavigationBar = () => {
+  const username = useAppSelector((state) => state.user.username);
+  const url = "/" + username;
+
   return (
     <Navbar bg="light" expand="lg" sticky="top">
       <Navbar.Brand>
         <Link to={url} className="navbar-brand">
-          {props.username}
+          {username}
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle />
