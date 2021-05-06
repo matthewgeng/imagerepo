@@ -15,10 +15,8 @@ if (process.env.REACT_APP_PROD === "true") {
 } else if (process.env.REACT_APP_PROXY != null) {
   axios.defaults.baseURL = `https://localhost:${process.env.REACT_APP_PROXY}`;
 } else {
-  axios.defaults.baseURL = `http://localhost:5000`;
+  axios.defaults.baseURL = `http://localhost:8000`;
 }
-
-// console.log(axios.defaults.baseURL);
 
 ReactDOM.render(
   <React.StrictMode>
