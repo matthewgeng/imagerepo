@@ -1,4 +1,5 @@
 server {
+    client_max_body_size ${TOTAL_FILE_LIMIT_MB}M; # needed since image upload exceeds default 1mb
 
     listen ${NGINX_APP_PORT};
 

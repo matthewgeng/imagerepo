@@ -1,6 +1,6 @@
-flask
-flask_cors
+fastapi
+# for form files
+python-multipart
+uvicorn
 pandas
 numpy
-gunicorn
-scikit-learn
