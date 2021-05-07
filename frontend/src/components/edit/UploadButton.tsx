@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
-import { useAppSelector } from "../../state/hooks";
+import { useAppSelector, useAppDispatch } from "../../state/hooks";
+import { updateUploaded } from "../../state/userSlice";
 
 // TODO move logic into UserEdit component, child components shouldn't be responsible of logic+api calls
 const UploadButton = () => {
   const username = useAppSelector((state) => state.user.username);
+  const dispatch = useAppDispatch();
   const uploadRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<[File]>();
   const triggerUpload = (e: React.FormEvent) => {
@@ -32,10 +34,11 @@ const UploadButton = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-        .then((res) => {
-          console.log(res.data);
+        .then(() => {
+          dispatch(updateUploaded(true));
         })
         .catch((err) => {
+          dispatch(updateUploaded(false));
           console.log(err);
         });
     }
@@ -44,12 +47,6 @@ const UploadButton = () => {
   const onFileChange = (e: React.FormEvent) => {
     // @ts-ignore
     setFiles([...e.target.files]);
-
-    // for (const file in e.target.files) {
-    //   console.log(file);
-    //   formData.append("file", file);
-    // }
-    // console.log(formData);
   };
 
   return (

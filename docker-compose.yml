@@ -46,6 +46,35 @@ services:
             FASTAPI_PROD: ${PROD}
             FASTAPI_HOST_IP: ${HOST_IP}
             FASTAPI_HOST_NAME: ${HOST_NAME}
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
         image: ${CONTAINER_BACKEND_NAME}
         container_name: ${CONTAINER_BACKEND_NAME}
         restart: always
+
+    mongodb:
+        image: mongo
+        container_name: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+            MONGO_DATABASE: ${CONTAINER_MONGO_NAME}
+        ports:
+            - 27017:27017
+        volumes:
+            - mongodb_data:/data/db
+
+    # todo move into a dev docker compose
+    # mongo-express:
+    #     image: mongo-express
+    #     container_name: mongo-express
+    #     restart: always
+    #     ports:
+    #         - 8081:8081
+    #     environment:
+    #         ME_CONFIG_MONGODB_ADMINUSERNAME: root
+    #         ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
+
+volumes:
+    mongodb_data:

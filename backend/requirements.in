@@ -1,6 +1,9 @@
+# running fastapi
 fastapi
-# for form files
-python-multipart
+# in the docker image gunicorn is used to manage uvicorn, but gunicorn isn't necessary to run fastapi
 uvicorn
-pandas
-numpy
+# for form+fileupload files
+python-multipart
+
+# pillow for image resizing for thumbnails and full screen
+pillow
