@@ -32,21 +32,22 @@ if os.environ.get("FASTAPI_PROD") == "false" or os.environ.get("FASTAPI_PROD") =
     f"https://localhost:{proxy_port}", f"http://{host_name}:{proxy_port}", 
     f"https://{host_name}:{proxy_port}",f"http://{host_ip}:{proxy_port}", 
     f"https://{host_ip}:{proxy_port}", "http://localhost:3000"]
-    logger.warn("MODE: development")
+    logger.warn("DEVELOPMENT MODE")
+    uri = f"mongodb://{mongo_username}:{mongo_password}@localhost:27017/"
 else:
     debug = False
     allowed_origins = [f"http://{host_name}:{proxy_port}", f"https://{host_name}:{proxy_port}",
     f"http://{host_ip}:{proxy_port}", f"https://{host_ip}:{proxy_port}", f"http://{host_name}", f"https://{host_name}"]
-
-
-uri = f"mongodb://{mongo_username}:{mongo_password}@localhost:27017/"
+    # with docker magic, docker replaces mongo (the container name) to the proper ip address magic bruh magic
+    uri = f"mongodb://{mongo_username}:{mongo_password}@mongo:27017/"
 
 try:
     client = MongoClient(uri, serverSelectionTimeoutMS=1000)
     db = client["users"]
     fs = gridfs.GridFS(db)
+    logger.error("MONGO CONNECTED") # uhhh error level log because it shows, but doesn't actually break stuff kinda hacky
 except:
-    logger.error("mongo connection failed, are your environment variables set?")
+    logger.error("ERROR: mongo connection failed, are your environment variables set?")
 
 app.add_middleware(
     CORSMiddleware,
@@ -73,6 +74,7 @@ async def upload(
             fs.put(file.file, filename=file.filename, user=username)
         return {"success":True}
     except:
+        logger.error("ERROR: Files not uploaded")
         raise HTTPException(status_code=500, detail="Upload failed")  
 
 if __name__ == "__main__":
