@@ -32,7 +32,7 @@ if os.environ.get("FASTAPI_PROD") == "false" or os.environ.get("FASTAPI_PROD") =
     f"https://localhost:{proxy_port}", f"http://{host_name}:{proxy_port}", 
     f"https://{host_name}:{proxy_port}",f"http://{host_ip}:{proxy_port}", 
     f"https://{host_ip}:{proxy_port}", "http://localhost:3000"]
-    logger.warn("DEVELOPMENT MODE")
+    logger.error("DEVELOPMENT MODE")
     uri = f"mongodb://{mongo_username}:{mongo_password}@localhost:27017/"
 else:
     debug = False
@@ -61,9 +61,15 @@ app.add_middleware(
 async def test():
     return {"hello": "world"}
 
+@app.get("/api/{username}/files")
+async def files(username:str):
+
+    return {"username": username}
+
 @app.post("/api/upload")
 async def upload(
     files: List[UploadFile] = File(...), 
+    # can't use pydantic model here cause http doesn't allow multipart/form-data and json --> there are fastapi workarounds but messy
     username: str = Form(...), 
     token: Optional[str] = Form(None) # TODO eventually when implementing user tokens, change None (optional) to ... (required), note Form("some value") is a default
     ):
