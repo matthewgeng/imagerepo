@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException, File, UploadFile, Depends, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.logger import logger
 from pydantic import BaseModel
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
+
 from typing import List, Optional
 from PIL import Image 
 
@@ -10,6 +11,7 @@ import gridfs
 import uvicorn
 import os
 import pprint
+import io
 
 app = FastAPI()
 
@@ -41,14 +43,6 @@ else:
     # with docker magic, docker replaces mongo (the container name) to the proper ip address magic bruh magic
     uri = f"mongodb://{mongo_username}:{mongo_password}@mongo:27017/"
 
-try:
-    client = MongoClient(uri, serverSelectionTimeoutMS=1000)
-    db = client["users"]
-    fs = gridfs.GridFS(db)
-    logger.error("MONGO CONNECTED") # uhhh error level log because it shows, but doesn't actually break stuff kinda hacky
-except:
-    logger.error("ERROR: mongo connection failed, are your environment variables set?")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -57,14 +51,59 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup():
+    global client, db, fs
+    try:
+        client = AsyncIOMotorClient(uri)
+        db = client["users"]
+        fs = AsyncIOMotorGridFSBucket(db)
+        logger.error("MONGO CONNECTED") # uhhh error level log because it shows, but doesn't actually break stuff kinda hacky
+    except:
+        logger.error("ERROR: mongo connection failed, are your environment variables set?")
+
 @app.get("/api/test")
 async def test():
     return {"hello": "world"}
 
 @app.get("/api/{username}/files")
 async def files(username:str):
-
+    # data = await fs.find({"user": username}).to_list(None)
+    cursor = fs.find({"username": username})
+    logger.error(await fs.find({"username": username}).to_list(None))
+    test = []
+    async for gridOut in cursor:
+        # logger.error(pprint.pprint(gridOut))
+        logger.error(pprint.pprint(gridOut.filename))
+        test.append(gridOut.filename)
+    # logger.error(pprint.pprint(data))
+    logger.error(test)
     return {"username": username}
+
+# TODO this can make a thumnail larger in size(data) for some reason look into
+async def gen_thumbnail(file):
+    imageBytes = io.BytesIO()
+    image = Image.open(file)
+    image.thumbnail((200,200))
+    image.save(imageBytes, format=image.format)
+    imageBytes = imageBytes.getvalue()
+    # imageBytes.seek(0) # supposedly this is something you need to do? broke things for me https://stackoverflow.com/questions/55873174/how-do-i-return-an-image-in-fastapi
+    return imageBytes
+
+async def upload_raw_file(file: UploadFile, username):
+    grid_in_og = fs.open_upload_stream(file.filename)
+    await grid_in_og.write(file.file)
+    await grid_in_og.set("username", username)
+    await grid_in_og.set("thumbnail", False)
+    await grid_in_og.close()
+
+async def upload_thumb_file(file: UploadFile, username):
+    thumbnail = await gen_thumbnail(file.file)
+    grid_in_thumb = fs.open_upload_stream(file.filename)
+    await grid_in_thumb.write(thumbnail)
+    await grid_in_thumb.set("username", username)
+    await grid_in_thumb.set("thumbnail", True)
+    await grid_in_thumb.close()
 
 @app.post("/api/upload")
 async def upload(
@@ -77,7 +116,9 @@ async def upload(
     try: 
         for file in files:
             # original file --> for download
-            fs.put(file.file, filename=file.filename, user=username)
+            await upload_raw_file(file, username)
+            await upload_thumb_file(file, username)
+
         return {"success":True}
     except:
         logger.error("ERROR: Files not uploaded")
