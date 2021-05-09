@@ -5,8 +5,8 @@ uvicorn
 # for form+fileupload files
 python-multipart
 
-# mongo driver
-pymongo
+# async mongo driver
+motor
 
 # pillow for image resizing for thumbnails and full screen
 pillow

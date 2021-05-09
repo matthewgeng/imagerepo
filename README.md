@@ -9,16 +9,22 @@
     * or I think there is axios support for upload progress?
         * https://www.youtube.com/watch?v=Ti8QNiRRzOA
 * I guess better ui huh?  
+* add better error codes/catching
+* proper 3rd party ssl certificates which will remove need for checking ip or domain accessed
 
-### Optimziations
+### Optimizations
+
 * move logic/api calls into parent component
 * disable react dev tools + redux dev tools for production 
 * change mongo user/pass to docker secrets and create defined readwrite user, don't use root
 * create dev dockerfiles + dev dockercompose for dev workflow
     * binded volume mounts for hot reloading
-* switch to one nginx instance
-* implement chunked file uploading
+* possibly switch to one nginx instance?
+* implement chunked file uploading frontend
 * implement chucked file reponses
+* optimize image preprocessing --> merge processed file and thumb fail to one function?
+* optimize image stuff --> blobs, urls? 
+    * https://www.bignerdranch.com/blog/dont-over-react-rendering-binary-data/
 
 
 ## Interesting links about file uploading practices

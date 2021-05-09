@@ -3,13 +3,17 @@ import { Container, Row, Col } from "react-bootstrap";
 import ImageGallery from "../ImageGallery";
 import NavigationBar from "./NavigationBarEdit";
 
-const UserEdit = () => {
+interface Props {
+  images: Object[];
+}
+
+const UserEdit = (props: Props) => {
   return (
     <Container fluid>
       <NavigationBar />
       <Row>
         <Col>
-          <ImageGallery />
+          <ImageGallery images={props.images} />
         </Col>
       </Row>
     </Container>
