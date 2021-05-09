@@ -7,7 +7,7 @@ interface UserState {
   uploaded: boolean;
   isUploading: boolean;
   triggerImageLoad: boolean;
-  files: Object;
+  files: Object[];
 }
 
 // Define the initial state using that type
@@ -15,8 +15,8 @@ const initialState: UserState = {
   username: "",
   uploaded: false,
   isUploading: false,
-  triggerImageLoad: false,
-  files: {},
+  triggerImageLoad: true,
+  files: [{}],
 };
 
 export const userSlice = createSlice({
@@ -37,7 +37,7 @@ export const userSlice = createSlice({
     updateTriggerImageLoad: (state, action: PayloadAction<boolean>) => {
       state.triggerImageLoad = action.payload;
     },
-    updateFiles: (state, action: PayloadAction<Object>) => {
+    updateFiles: (state, action: PayloadAction<Object[]>) => {
       state.files = action.payload;
     },
   },

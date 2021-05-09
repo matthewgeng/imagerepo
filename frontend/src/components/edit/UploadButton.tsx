@@ -4,6 +4,7 @@ import { useAppSelector, useAppDispatch } from "../../state/hooks";
 import {
   updateIsUploading,
   updateUploaded,
+  updateTriggerImageLoad,
   selectUsername,
 } from "../../state/userSlice";
 import { uploadFiles } from "../../api/filesApi";
@@ -30,6 +31,7 @@ const UploadButton = () => {
     await uploadFiles(files, username);
     dispatch(updateIsUploading(false));
     dispatch(updateUploaded(true));
+    dispatch(updateTriggerImageLoad(true));
   };
 
   const resetFileInput = (e: React.FormEvent) => {
