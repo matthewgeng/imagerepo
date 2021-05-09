@@ -27,7 +27,10 @@
     * https://www.bignerdranch.com/blog/dont-over-react-rendering-binary-data/
 
 
-## Interesting links about file uploading practices
+## Interesting links/searches about file uploading practices
 * https://stackoverflow.com/questions/4083702/posting-a-file-and-associated-data-to-a-restful-webservice-preferably-as-json
 * https://stackoverflow.com/questions/53725760/does-multipart-form-data-sends-the-whole-file-data-at-one-go-or-in-a-stream
 * https://stackoverflow.com/questions/2502596/python-http-post-a-large-file-with-streaming
+* axios can't start download notif with content-disposition header --> nasty workaround
+   * create objectFromUrl, create and click on link :(
+* send url back for images 
