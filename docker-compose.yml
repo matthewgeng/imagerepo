@@ -1,53 +1,80 @@
-version: '3'
+version: "3"
 services:
-  # Create frontend container
-  frontend: # Name of our service
-    build: 
-      context: ./frontend # path to dockerfile
-      # for some reason I can't use environment for react env frontend variables that I want to access in react
-      args: 
-        REACT_APP_PORT: ${REACT_APP_PORT}
-        REACT_APP_PROXY: ${NGINX_PORT}
-        REACT_APP_HOST_IP: ${HOST_IP}
-        REACT_APP_HOST_NAME: ${HOST_NAME}
-        REACT_APP_PROD: ${PROD}
-    expose: 
-      - ${REACT_APP_PORT}
-    environment: # accessible in dockerfile
-      NGINX_APP_PORT: ${REACT_APP_PORT}
-    image: ${CONTAINER_FRONTEND_NAME}
-    container_name: ${CONTAINER_FRONTEND_NAME}
-    restart: always
+    frontend:
+        build:
+            context: ./frontend
+            # for some reason I can't use environment for react env frontend variables that I want to access in react
+            args:
+                REACT_APP_PORT: ${REACT_APP_PORT}
+                REACT_APP_PROXY: ${NGINX_PORT}
+                REACT_APP_HOST_IP: ${HOST_IP}
+                REACT_APP_HOST_NAME: ${HOST_NAME}
+                REACT_APP_PROD: ${PROD}
+        expose:
+            - ${REACT_APP_PORT}
+        environment: # accessible in dockerfile
+            NGINX_APP_PORT: ${REACT_APP_PORT}
+            TOTAL_FILE_LIMIT_MB: ${TOTAL_FILE_LIMIT_MB}
+        image: ${CONTAINER_FRONTEND_NAME}
+        container_name: ${CONTAINER_FRONTEND_NAME}
+        restart: always
 
-  nginx_reverse_proxy:
-    build: ./nginx
-    environment: 
-      NGINX_FRONTEND_PORT: ${REACT_APP_PORT}
-      NGINX_FRONTEND_NAME: ${CONTAINER_FRONTEND_NAME}
-      NGINX_BACKEND_PORT: ${FLASK_APP_PORT}
-      NGINX_BACKEND_NAME: ${CONTAINER_BACKEND_NAME}
-      NGINX_PORT: ${NGINX_PORT}
-    ports: # Port binding from docker container to host
-      - "${NGINX_PORT}:${NGINX_PORT}"
-    image: ${CONTAINER_NGINX_NAME}
-    container_name: ${CONTAINER_NGINX_NAME}
-    restart: always
+    nginx_reverse_proxy:
+        build: ./nginx
+        environment:
+            NGINX_FRONTEND_PORT: ${REACT_APP_PORT}
+            NGINX_FRONTEND_NAME: ${CONTAINER_FRONTEND_NAME}
+            NGINX_BACKEND_PORT: ${FASTAPI_PORT}
+            NGINX_BACKEND_NAME: ${CONTAINER_BACKEND_NAME}
+            NGINX_PORT: ${NGINX_PORT}
+            TOTAL_FILE_LIMIT_MB: ${TOTAL_FILE_LIMIT_MB}
+        ports: # Port binding from docker container to host/remote
+            - "${NGINX_PORT}:${NGINX_PORT}"
+        image: ${CONTAINER_NGINX_NAME}
+        container_name: ${CONTAINER_NGINX_NAME}
+        restart: always
 
-  # Create backend container
-  backend:
-    # Create backend container  
-    build: ./backend
-    # I should just be able to do this but for some reason nginx doesn't like just this
-    expose: 
-      - ${FLASK_APP_PORT}
-    environment: 
-      # don't need the FLASK_APP_ but here to keep the convention needed for the frontend(react)
-      FLASK_APP_PORT: ${FLASK_APP_PORT}
-      FLASK_APP_FRONTEND: ${REACT_APP_HOST}
-      FLASK_APP_PROXY: ${NGINX_PORT}
-      FLASK_APP_PROD: ${PROD}
-      FLASK_APP_HOST_IP: ${HOST_IP}
-      FLASK_APP_HOST_NAME: ${HOST_NAME}
-    image: ${CONTAINER_BACKEND_NAME}
-    container_name: ${CONTAINER_BACKEND_NAME}
-    restart: always
+    backend:
+        build: ./backend
+        expose:
+            - ${FASTAPI_PORT}
+        environment:
+            PORT: ${FASTAPI_PORT} # need for this special optimized image because that's how you specify port
+            FASTAPI_PORT: ${FASTAPI_PORT}
+            FASTAPI_FRONTEND: ${REACT_APP_HOST}
+            FASTAPI_PROXY: ${NGINX_PORT}
+            FASTAPI_PROD: ${PROD}
+            FASTAPI_HOST_IP: ${HOST_IP}
+            FASTAPI_HOST_NAME: ${HOST_NAME}
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+        image: ${CONTAINER_BACKEND_NAME}
+        container_name: ${CONTAINER_BACKEND_NAME}
+        restart: always
+
+    mongodb:
+        image: mongo
+        container_name: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+            MONGO_DATABASE: ${CONTAINER_MONGO_NAME}
+        expose:
+            - ${MONGO_PORT}
+        volumes:
+            - mongodb_data:/data/db
+
+    # todo move into a dev docker compose
+    # mongo-express:
+    #     image: mongo-express
+    #     container_name: mongo-express
+    #     restart: always
+    #     ports:
+    #         - 8081:8081
+    #     environment:
+    #         ME_CONFIG_MONGODB_ADMINUSERNAME: root
+    #         ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
+
+volumes:
+    mongodb_data:

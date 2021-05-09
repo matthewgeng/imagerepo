@@ -1,7 +1,5 @@
 FROM node:lts-alpine as build
 
-RUN mkdir -p /usr/src/app/frontend
-
 WORKDIR /usr/src/app/frontend
 
 COPY package*.json ./

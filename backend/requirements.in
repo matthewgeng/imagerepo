@@ -1,6 +1,12 @@
-flask
-flask_cors
-pandas
-numpy
-gunicorn
-scikit-learn
+# running fastapi
+fastapi
+# in the docker image gunicorn is used to manage uvicorn, but gunicorn isn't necessary to run fastapi
+uvicorn
+# for form+fileupload files
+python-multipart
+
+# async mongo driver
+motor
+
+# pillow for image resizing for thumbnails and full screen
+pillow
