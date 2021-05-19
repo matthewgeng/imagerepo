@@ -6,7 +6,7 @@
 #
 click==7.1.2
     # via uvicorn
-fastapi==0.64.0
+fastapi==0.65.1
     # via -r requirements.in
 h11==0.12.0
     # via uvicorn
@@ -14,7 +14,7 @@ motor==2.4.0
     # via -r requirements.in
 pillow==8.2.0
     # via -r requirements.in
-pydantic==1.8.1
+pydantic==1.8.2
     # via fastapi
 pymongo==3.11.4
     # via motor
@@ -22,7 +22,7 @@ python-multipart==0.0.5
     # via -r requirements.in
 six==1.16.0
     # via python-multipart
-starlette==0.13.6
+starlette==0.14.2
     # via fastapi
 typing-extensions==3.10.0.0
     # via pydantic

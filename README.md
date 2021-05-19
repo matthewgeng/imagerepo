@@ -1,5 +1,49 @@
 # imagerepo
 
+My vision of this project is to create a base template or "image" of an image uploading platform that I can use for future projects. 
+
+One of those future projects involves incorporating a lot of machine learning with uploading pictures such as determine if a photo is "good" or "bad", searching by description/objects, etc.
+
+
+## Features *more currently in development!
+
+### Users
+
+Currently, it's a really basic user structure. I wanted to have a url path similar to instagrams. There is no registration, but I plan to implment that soon!
+
+![gif of user demo](./assets/users.gif)
+
+
+## Uploading
+
+Working on a progress bar similar to google photos or drive soon!
+
+Note that most of the files I uploaded are large camera photos (~24 MB), so the delay is expected (similar to Google Photos).
+
+![gif of uploading demo](./assets/uploading.gif)
+
+Technical:
+
+1. Files are posted as a list of File objects with FormData. 
+2. I use Pillow to preprocess the image and generate a compressed and thumbnail photo
+3. I store all these the compressed image, thumbnail, and raw image into Mongo with the GridFS specification
+4. Image links are returned 
+
+## Downloading
+
+Working on a progress bar similar to google photos or drive soon!
+
+![gif of uploading demo](./assets/download.gif)
+
+Technical:
+
+1. Files are queried for by username
+2. Files zipped into a streaming data response
+   * I don't think we can make a prgoress bar with a streaming response, so I'll have to change that in the future
+3. Zipped file returned
+
+## Deleting coming soon!
+
 ## Running
 
 ### Docker
@@ -25,8 +69,6 @@ Backend:
 Mongo: 
 1. Spin up a mongo instance, I used docker with the `docker-compose-dev.yml` file
 2. Otherwise spin up mongo and fill in the connection details in `main.py`. I used defaults of port `27017` and user/pass as `root/rootpassword`
-
-
 
 ## Todos
 
