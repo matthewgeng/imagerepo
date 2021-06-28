@@ -9,7 +9,7 @@ One of those future projects involves incorporating a lot of machine learning wi
 
 ### Users
 
-Currently, it's a really basic user structure. I wanted to have a url path similar to instagrams. There is no registration, but I plan to implment that soon!
+Currently, it's a really basic user structure. I wanted to have a url path similar to Instagram's. There is no registration, but I plan to implment that soon!
 
 ![gif of user demo](./assets/users.gif)
 
@@ -39,7 +39,7 @@ Technical:
 
 1. Files are queried for by username
 2. Files zipped into a streaming data response
-   * I don't think we can make a prgoress bar with a streaming response, so I'll have to change that in the future
+   * I don't think we can make a progress bar with a streaming response, so I'll have to change that in the future
 3. Zipped file returned
 
 ## Deleting coming soon!
